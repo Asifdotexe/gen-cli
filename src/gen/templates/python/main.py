@@ -1,5 +1,5 @@
 def main():
-    print("Weclome to Gen-cli!")
+    print("Weclome to gen-cli!")
 
 
 if __name__ == "__main__":
