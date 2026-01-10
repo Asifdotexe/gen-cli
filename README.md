@@ -1,7 +1,3 @@
-Absolutely! We can turn your help text into a **well-structured README.md** that’s clean, readable, and ready for GitHub or distribution. Here’s a polished version:
-
----
-
 
 # Gen-CLI
 
