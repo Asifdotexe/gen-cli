@@ -1,4 +1,6 @@
 import os
+import sys
+from importlib import resources
 
 from gen.config import EXTENSION_MAP
 
@@ -10,13 +12,20 @@ def gen_langtemplate(file, extension, flag=None):
         lang = EXTENSION_MAP.get(extension)
         filename = file + extension
 
+        abs_path = os.path.join(working_dir, filename)  # Gives absolute path
+
         current_dir = os.path.dirname(__file__)  # Gets the parent dir of lib
         template_name = f"main{extension}"
-        template_path = os.path.join(
-            current_dir, "..", "templates", lang, template_name
-        )
 
-        abs_path = os.path.join(working_dir, filename)  # Gives absolute path
+        try:
+            template_path = resources.files("gen.templates").joinpath(
+                lang, template_name
+            )
+            if not template_path.exists():
+                raise FileNotFoundError("Template does not exist.")
+        except FileNotFoundError as e:
+            print(e)
+            sys.exit(1)
 
         # print(template_path)
         with open(template_path, "r") as template:

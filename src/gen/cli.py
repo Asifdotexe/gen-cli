@@ -18,24 +18,30 @@ def main():
     elif "." in cmd:
         try:
             parts = sys.argv[1].split(".")
+            if len(parts) != 2:
+                raise ValueError("Filename must contain exactly one extension.")
+        except IndexError:
+            print("Usage: gen <filename.extension>")
+            sys.exit(1)
+        except ValueError as e:
+            print(e)
+            sys.exit(1)
 
-            filename, extension = parts[0], "." + parts[1]
+        filename, extension = parts[0], "." + parts[1]
 
-            flag = sys.argv[2] if len(sys.argv) > 2 else None
+        flag = sys.argv[2] if len(sys.argv) > 2 else None
 
-            if flag:
-                template.gen_langtemplate(filename, extension, flag=flag)
-            else:
-                template.gen_langtemplate(filename, extension)
-        except:
-            print("gen <filename.extension>")
+        if flag:
+            template.gen_langtemplate(filename, extension, flag=flag)
+        else:
+            template.gen_langtemplate(filename, extension)
 
     # check wheather lang has templates
-    elif sys.argv[1] == "new":
+    elif cmd == "new":
         try:
             if (
                 "--" in sys.argv[3]
-                and sys.argv[3] in EXTENSION_MAP.values()
+                and sys.argv[3][2:] in EXTENSION_MAP.values()
                 and "--" in sys.argv[4]
             ):
                 dir_name, lang, framework = (
@@ -45,6 +51,7 @@ def main():
                 )
                 template.gen_framtemplate(dir_name, lang, framework)
         except IndexError:
-            print("gen new <dir name> <lang> <framework>")
+            print("gen new <dir name> --<lang> --<framework>")
+
     else:
-        print("gen <filename.extension>")
+        print("Usage: gen <filename.extension>")
