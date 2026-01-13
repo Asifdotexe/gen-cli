@@ -18,6 +18,9 @@ def main():
         except:
             print("Usage: gen lang --list")
 
+    elif cmd in ["--tree", "tree"]:
+        list_.tree_view()
+
     elif cmd in ["framework", "lib"]:
         try:
             if sys.argv[2] == "--list":
