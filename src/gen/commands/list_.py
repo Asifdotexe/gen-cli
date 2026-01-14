@@ -1,11 +1,9 @@
-import os
 from importlib import resources
 from pathlib import Path
 
 from gen.config import EXTENSION_MAP
 
 # Get the current working directory
-current_dir = os.getcwd()
 
 
 # Get the path to the templates directory in the "gen" module
@@ -33,8 +31,8 @@ def list_framtemplates(path=templates_path, prefix: str = ""):
 
 
 # Prints the directory tree for the current directory
-def tree_view(max_depth):
-    print_tree(Path(current_dir), max_depth=max_depth)
+def tree_view(path, depth):
+    print_tree(Path(path), max_depth=depth)
 
 
 def print_tree(

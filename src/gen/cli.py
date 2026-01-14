@@ -1,7 +1,10 @@
+import os
 import sys
 
 from gen.commands import helper, list_, template
 from gen.config import EXTENSION_MAP
+
+current_dir = os.getcwd()
 
 
 def main():
@@ -20,14 +23,33 @@ def main():
 
     # This has to be fix (Exception Handling)
     elif cmd in ["--tree", "tree"]:
+        path = current_dir
+        depth = 1
         try:
-            max_depth = sys.argv[2]
-            if max_depth == "-r":
-                list_.tree_view(None)
-            else:
-                list_.tree_view(max_depth=int(max_depth[1:]))
-        except:
-            list_.tree_view(max_depth=1)
+            args = sys.argv[2:]  # args after tree
+
+            if not args:
+                pass
+
+            elif len(args) == 1:
+                if args[0] == "-r":
+                    depth = None
+                elif args[0].startswith("-"):
+                    depth = int(args[0][1:])
+                else:
+                    path = os.path.join(current_dir, args[0])
+            elif len(args) >= 2:
+                path = os.path.join(current_dir, args[0])
+
+                if args[1] == "-r":
+                    depth = None
+                elif args[1].startswith("-"):
+                    depth = int(args[1][1:])
+
+            list_.tree_view(path=path, depth=depth)
+        except (ValueError, IndexError, OSError) as e:
+            print(f"tree error: {e}")
+            list_.tree_view(path=current_dir, depth=1)
 
     elif cmd in ["framework", "lib"]:
         try:
