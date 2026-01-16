@@ -1,21 +1,29 @@
 HELP_TEXT = """
-Gen-CLI: Generate boilerplate and framework templates for multiple programming languages.
+Gen-CLI — Generate boilerplate files and framework project templates
+for multiple programming languages.
 
-Usage:
+USAGE:
     gen <command> [options]
 
-Commands:
-    list                               List available languages and frameworks.
-    doctor                             Check environment and configuration.
-    help                               Show this help message.
+COMMANDS:
+    new <project|file>    Generate a file or project from a template
+    list                  List available languages and frameworks
+    tree [depth|path]     Show directory tree
+    doctor                Check environment and configuration
+    help                  Show this help message
 
-Options (for `new` command):
-    --dry-run                          Show what would be generated without writing files.
-    --overwrite                        Overwrite existing files if they exist.
-    --project-name <name>              Name to use in templates (default: myapp).
-    --author <name>                    Author name to use in templates (optional).
+NEW COMMAND:
+    gen new <project_name|file> --lang <language> --template <template> [options]
 
-Languages & Frameworks:
+OPTIONS (for `new`):
+    --lang <language>         Programming language
+    --template <template>    Framework or template name
+    --dry-run                Show output without writing files
+    --overwrite              Overwrite existing files
+    --project-name <name>    Name used inside templates
+    --author <name>          Author name (optional)
+
+SUPPORTED LANGUAGES & TEMPLATES:
     Python:     flask, fastapi, django
     Go:         cli, web
     Rust:       actix, rocket
@@ -25,45 +33,47 @@ Languages & Frameworks:
     JavaScript: node, react, vue
     HTML:       standard
 
-Examples:
-    # Generate a single file using Python Flask template
-    gen new main.py python flask --project-name myapp
+EXAMPLES:
+    # Generate a single Python Flask file
+    gen new main.py --lang python --template flask
 
-    # Generate a full FastAPI project
-    gen new myapp python fastapi --dry-run
+    # Generate a FastAPI project (dry run)
+    gen new myapp --lang python --template fastapi --dry-run
 
     # Generate a Go CLI project
-    gen new app.go go cli
+    gen new mytool --lang go --template cli
 
     # List all supported languages and frameworks
     gen list
 
+    # Show directory tree recursively
+    gen tree -r
+
     # Check environment
     gen doctor
 
-Help:
-    gen help                          Show this message.
+HELP:
+    gen help
 """
 
-commands = """
 
-List of Commands:
+COMMANDS_TEXT = """
+AVAILABLE COMMANDS:
 
-    Listing:
-        gen lang --list (Display all available language templates)
+    gen new <project|file> --lang <language> --template <template>
+        Generate a project or file from templates
 
-        gen framework/lib --list (Display all available language templates)
+    gen list
+        List supported languages and templates
 
-    Tree view:
-        gen tree (Display tree view of file structure from current directory)
+    gen tree [path] [-r|-<depth>]
+        Display directory tree
 
-        gen tree --<lang> <framework> (Display the file structure of framework)
+    gen doctor
+        Check environment and configuration
 
-    Generating Templates:
-        gen <filename.extension> (Create the file with Boiler Plate code)
-
-        gen new <dir_naem> --<lang> --<framework> (Create dir with framework tempalte)
-
+    gen help
+        Show help information
 """
 
 
@@ -72,4 +82,4 @@ def help():
 
 
 def list_commands():
-    print(commands)
+    print(COMMANDS_TEXT)
