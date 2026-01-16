@@ -2,11 +2,13 @@ import os
 import shutil
 import sys
 from importlib import resources
+from pathlib import Path
 
 from gen.commands import list_
-from gen.config import EXTENSION_MAP
+from gen.config import EXTENSION_MAP, FRAMEWORK_CMD, FRAMEWORK_JINJA
+from gen.core.render import render_framework
 
-working_dir = os.getcwd()
+working_dir = Path.cwd()
 
 
 def gen_langtemplate(file, extension, flag=None):
@@ -15,8 +17,6 @@ def gen_langtemplate(file, extension, flag=None):
     filename = file + extension
 
     create_path = os.path.join(working_dir, filename)  # Gives absolute path
-
-    current_dir = os.path.dirname(__file__)  # Gets the parent dir of lib
     template_name = f"main{extension}"
 
     template_path = resources.files("gen.templates").joinpath(lang, template_name)
@@ -42,20 +42,30 @@ def gen_langtemplate(file, extension, flag=None):
 
 
 def gen_framtemplate(dir_name, lang, framework):
-    try:
-        framework_path = resources.files("gen.templates").joinpath(lang, framework)
-        if not framework_path.exists():
-            list_.list_framtemplates()
-            raise FileNotFoundError(f"{framework} template does not exist.")
-    except FileNotFoundError as e:
-        print(e)
-        sys.exit(1)
+    key = f"{lang}/{framework}"
+    if key in FRAMEWORK_CMD:
+        cmds = [c.format(project_name=dir_name) for c in FRAMEWORK_CMD[value]]
+        for cmd in cmds:
+            os.system(cmd)
+        return
+    framework_path = resources.files("gen.templates").joinpath(lang, framework)
 
-    create_path = os.path.join(working_dir, dir_name)
-    if os.path.exists(create_path):
+    if not framework_path.exists():
+        list_.list_framtemplates()
+        raise FileNotFoundError(f"{framework} template does not exist.")
+
+    target_root = working_dir / dir_name
+
+    if target_root.exists():
         print(f"The directory '{dir_name}' already exists.")
         sys.exit(1)
+
+    target_root.mkdir(parents=True)
+
+    if key in FRAMEWORK_JINJA:
+        context = {"project_name": dir_name}
+        render_framework(framework_path, target_root, context)
+        print(f"'{dir_name}' Created using template '{key}'")
     else:
-        os.makedirs(create_path)
-        shutil.copytree(framework_path, create_path, dirs_exist_ok=True)
+        shutil.copytree(framework_path, target_root, dirs_exist_ok=True)
         print(f"{dir_name} is created using {framework} template ")
