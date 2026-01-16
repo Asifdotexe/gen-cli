@@ -8,3 +8,10 @@ EXTENSION_MAP = {
     ".rs": "rust",
     ".html": "html",
 }
+
+FRAMEWORK_CMD = {
+    "python/django": ["pip install django", "django-admin startproject {project_name}"]
+}
+
+
+FRAMEWORK_JINJA = ["python/project"]
