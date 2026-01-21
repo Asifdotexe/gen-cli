@@ -164,25 +164,6 @@ gen/
 
 ---
 
-## Limitations
-
-* Argument parsing is manual (`sys.argv`)
-* Flags must follow exact order for `new`
-* No interactive mode
-* No plugin system
-
----
-
-## Roadmap
-
-* [ ] Migrate to argparse / typer
-* [ ] Improve error messages
-* [ ] Add interactive project generator
-* [ ] Add template registry
-* [ ] Add shell auto-completion
-
----
-
 ## License
 
 MIT License
