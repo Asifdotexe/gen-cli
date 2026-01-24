@@ -85,27 +85,30 @@ def main():
             print("Template does not exist.")
             list_.list_langtemplates()
     # check wheather lang has templates
-    elif cmd == "new":  # gen new <project/dir> --lang<lang> --template<framework/lib>
+    elif (
+        cmd == "new"
+    ):  # gen new <project/dir> --lang <lang> --template <framework/lib> (optinal: --dryrun) args = 7
         try:
-            if (
-                (len(sys.argv) >= 7)
-                and (sys.argv[3] == "--lang")
-                and (sys.argv[5] == "--template")
-            ):
-                dir_name, lang, framework_template, flag = (
+            if sys.argv[3] == "--lang" and sys.argv[5] == "--template":
+                dir_name, lang, framework_template = (
                     sys.argv[2],
                     sys.argv[4],
                     sys.argv[6],
-                    sys.argv[7],
                 )
-
-                template.gen_framtemplate(dir_name, lang, framework_template, flag)
+                if len(sys.argv) == 7:
+                    template.gen_framtemplate(
+                        dir_name, lang, framework_template, flag=None
+                    )
+                elif len(sys.argv):
+                    flag = sys.argv[7]
+                    template.gen_framtemplate(
+                        dir_name, lang, framework_template, flag=flag
+                    )
             else:
                 helper.concise_help()
         except IndexError:
             helper.concise_help()
         except Exception as e:
             print(e)
-
     else:
         helper.concise_help()

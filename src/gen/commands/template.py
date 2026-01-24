@@ -41,18 +41,12 @@ def gen_langtemplate(file, extension, flag=None):
                 print(f"{filename} overwrited!")
 
 
-def gen_framtemplate(dir_name, lang, framework, flag):
-    key = f"{lang}/{framework}"
-    if key in FRAMEWORK_CMD:
-        cmds = [c.format(project_name=dir_name) for c in FRAMEWORK_CMD[value]]
-        for cmd in cmds:
-            os.system(cmd)
-        return
+def gen_framtemplate(dir_name, lang, framework, flag=None):
     framework_path = resources.files("gen.templates").joinpath(lang, framework)
 
-    if not framework_path.exists():
-        list_.list_framtemplates()
-        raise FileNotFoundError(f"{framework} template does not exist.")
+    if flag == "--dryrun":
+        list_.print_tree(framework_path)
+        sys.exit(1)
 
     target_root = working_dir / dir_name
 
@@ -62,8 +56,16 @@ def gen_framtemplate(dir_name, lang, framework, flag):
 
     target_root.mkdir(parents=True)
 
-    if flag == "--dryrun":
-        list_.print_tree(framework_path)
+    key = f"{lang}/{framework}"
+    if key in FRAMEWORK_CMD:
+        cmds = [c.format(project_name=dir_name) for c in FRAMEWORK_CMD[value]]
+        for cmd in cmds:
+            os.system(cmd)
+        return
+
+    if not framework_path.exists():
+        list_.list_framtemplates()
+        raise FileNotFoundError(f"{framework} template does not exist.")
 
     elif key in FRAMEWORK_JINJA:
         context = {"project_name": dir_name}
