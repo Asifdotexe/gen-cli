@@ -1,23 +1,80 @@
 import os
 import sys
-import subprocess
 import platform
+from importlib.metadata import version, import_module
+from importlib.resources import files
+
+
+class Colors:
+    GREEN = "\033[92m"
+    RED = "\033[91m"
+    YELLOW = "\033[93m"
+    BLUE = "\033[94m"
+    ENDC = "\033[0m"
+
+
+def check_feature(name, func):
+    try:
+        func()
+        return True, None
+    except Exception as e:
+        return False, str(e)
 
 
 def run_doctor():
-    print("=" * 40)
-    print("Gen CLI Doctor")
-    print("=" * 40)
+    print("=" * 50)
+    print(f"{Colors.BLUE}Gen CLI Doctor{Colors.ENDC}")
+    print("=" * 50)
 
     checks = [
-        ("Python Version", sys.version),
-        ("Platform", platform.platform()),
-        ("Working Directory", os.getcwd()),
-        ("PATH directories", len(os.environ.get("PATH", "").split(":"))),
+        ("Python Version", lambda: sys.version.split()[0]),
+        ("Platform", lambda: platform.platform()),
+        ("Working Directory", lambda: os.getcwd()),
+        ("PATH directories", lambda: len(os.environ.get("PATH", "").split(":"))),
     ]
 
-    for name, value in checks:
-        print(f"{name}: {value}")
+    print(f"\n{Colors.BLUE}Environment Checks:{Colors.ENDC}")
+    print("-" * 50)
+    for name, func in checks:
+        try:
+            result = func()
+            print(f"{Colors.GREEN}OK{Colors.ENDC} {name}: {result}")
+        except Exception as e:
+            print(f"{Colors.RED}FAIL{Colors.ENDC} {name}: Error - {e}")
 
-    print("=" * 40)
-    print("All checks passed!")
+    print(f"\n{Colors.BLUE}Feature Checks:{Colors.ENDC}")
+    print("-" * 50)
+
+    feature_checks = [
+        ("gen --version", lambda: version("gen-cli")),
+        ("gen --help", lambda: import_module("gen.cli")),
+        ("gen list", lambda: import_module("gen.commands.list_")),
+        ("gen tree", lambda: import_module("gen.commands.list_")),
+        ("gen new", lambda: import_module("gen.commands.template")),
+        ("gen doctor", lambda: import_module("gen.commands.doctor")),
+        ("Templates", lambda: files("gen.templates")),
+    ]
+
+    working = 0
+    not_working = 0
+
+    for name, func in feature_checks:
+        success, error = check_feature(name, func)
+        if success:
+            print(f"{Colors.GREEN}OK{Colors.ENDC} {name}")
+            working += 1
+        else:
+            print(f"{Colors.RED}FAIL{Colors.ENDC} {name}: {error}")
+            not_working += 1
+
+    print(f"\n{Colors.BLUE}Summary:{Colors.ENDC}")
+    print("-" * 50)
+    print(f"{Colors.GREEN}Working:{Colors.ENDC} {working}")
+    print(f"{Colors.RED}Not Working:{Colors.ENDC} {not_working}")
+
+    print("\n" + "=" * 50)
+    if not_working == 0:
+        print(f"{Colors.GREEN}All checks passed!{Colors.ENDC}")
+    else:
+        print(f"{Colors.YELLOW}Some features need attention.{Colors.ENDC}")
+    print("=" * 50)

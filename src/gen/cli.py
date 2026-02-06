@@ -53,11 +53,13 @@ def parse_command_mode():
 
     list_parser = subparsers.add_parser("list")
 
-    # gen tree -n / -r
+    # gen tree -r / --depth
     tree_parser = subparsers.add_parser("tree")
     tree_parser.add_argument("path", nargs="?", default=current_dir)
     tree_parser.add_argument("-r", action="store_true", help="recursive")
-    tree_parser.add_argument("-d", type=int, default=1, help="depth (e.g. -d 2)")
+    tree_parser.add_argument(
+        "--depth", type=int, default=1, help="depth level (e.g. --depth 3)"
+    )
 
     # gen templates --list
     template_parser = subparsers.add_parser("template")
@@ -95,7 +97,7 @@ def parse_command_mode():
 
     elif args.command == "tree":
         path = os.path.join(current_dir, args.path)
-        depth = None if args.r else args.d
+        depth = None if args.r else args.depth
         list_.tree_view(path=path, depth=depth)
 
     elif args.command == "template":

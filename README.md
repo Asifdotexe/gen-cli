@@ -137,7 +137,7 @@ Display a tree view of your directory structure.
 ```bash
 gen tree                    # current directory
 gen tree -r                 # recursive (all levels)
-gen tree -d 3               # depth of 3 levels
+gen tree --depth 3          # depth of 3 levels
 gen tree path/to/dir        # specific directory
 ```
 
